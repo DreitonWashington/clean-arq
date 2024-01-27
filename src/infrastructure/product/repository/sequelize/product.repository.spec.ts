@@ -2,6 +2,7 @@ import { Sequelize } from "sequelize-typescript";
 import ProductModel from "./product.model";
 import Product from "../../../../domain/product/entity/product";
 import ProductRepository from "./product.repository";
+import ProductB from "../../../../domain/product/entity/productB";
 
 describe("Product Repository tests", () => {
 
@@ -10,7 +11,7 @@ describe("Product Repository tests", () => {
   beforeEach(async () => {
     sequelize = new Sequelize({
       dialect: "sqlite",
-      storage: ":memory",
+      storage: ":memory:",
       logging: false,
       sync: { force: true},
     });
@@ -91,9 +92,10 @@ describe("Product Repository tests", () => {
     const product = new Product("1", "Product 1", 100);
     await productRepository.create(product);
 
-    const product2 = new Product("2", "Product 2", 200);
+    const product2 = new ProductB("2", "Product 2", 200);
     await productRepository.create(product2);
-
+    product2.changePrice(400);
+    
     const foundProducts = await productRepository.findAll(); 
     const products = [product, product2];
 
