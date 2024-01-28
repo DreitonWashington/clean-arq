@@ -1,4 +1,6 @@
+import Entity from "../../@shared/entity/entity.abstract";
 import EventDispatcher from "../../@shared/event/eventDispatcher";
+import NotificationError from "../../@shared/notification/notification.error";
 import CustomerAddressChangedEvent from "../event/customerAddressChangedEvent";
 import CustomerCreatedEvent from "../event/customerCreatedEvent";
 import EnviaConsoleLog1Handler from "../event/handler/enviaConsoleLog1Handler";
@@ -6,17 +8,22 @@ import EnviaConsoleLog2Handler from "../event/handler/enviaConsoleLog2Handler";
 import EnviaConsoleLogHandler from "../event/handler/enviaConsoleLogHandler";
 import Address from "../value-object/address";
 
-export default class Customer {
-  private _id:string;
+export default class Customer extends Entity{
+  
   private _name: string;
   private _address!: Address;
   private _active: boolean = false;
   private _rewardPoints = 0;
 
   constructor(id:string, name:string) {
+    super()
     this._id = id;
     this._name = name;
     this.validate();
+
+    if(this.notification.hasErrors()) {
+      throw new NotificationError(this.notification.getErrors());
+    }
     const eventDispatcher = new EventDispatcher();
     const eventHandler = new EnviaConsoleLog1Handler();
     const eventHandler2 = new EnviaConsoleLog2Handler();
@@ -27,16 +34,18 @@ export default class Customer {
   }
 
   validate() {
-    if(this._id.length === 0) {
-      throw new Error("Id is required");
+    if(this.id.length === 0) {
+      this.notification.addError({
+        message: "Id is required",
+        context: "customer",
+      });
     }
     if(this._name.length === 0) {
-      throw new Error("Name is required");
+      this.notification.addError({
+        message: "Name is required",
+        context: "customer",
+      });
     }
-  }
-
-  get id(): string {
-    return this._id;
   }
 
   get name(): string {
