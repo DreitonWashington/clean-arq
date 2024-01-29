@@ -3,7 +3,7 @@ import Notification from "../notification/notification";
 export default abstract class Entity {
 
   protected _id: string;
-  protected notification: Notification;
+  public notification: Notification;
 
   constructor() {
     this.notification = new Notification()
@@ -11,5 +11,9 @@ export default abstract class Entity {
 
   get id(): string {
     return this._id;
+  }
+
+  get notifications(): Notification {
+    return this.notification;
   }
 }
